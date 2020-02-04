@@ -1,0 +1,64 @@
+﻿@page "/"
+
+
+@using DataAccessCore
+@using DataAccessCore.Models
+
+@using System.IO;
+
+@inject IHubmailDBData _db
+
+@inject IJSRuntime js
+
+
+<h3>Datagrid / Chart Test</h3>
+
+@if (pageSumQuery is null)
+//don't do anything yet...
+{
+
+}
+else
+{
+<div class="grid-container">
+    <DxDataGrid Data="@pageSumQuery" PageSize="20">
+        <DxDataGridColumn Caption="Department" Field="@nameof(PageSumQueryModel.GRP_ID)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="0">
+        </DxDataGridColumn>
+        <DxDataGridColumn Caption="Mono Totals" Field="@nameof(PageSumQueryModel.Mono_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="1">
+        </DxDataGridColumn>
+        <DxDataGridColumn Caption="Colour Totals" Field="@nameof(PageSumQueryModel.Colour_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="2">
+        </DxDataGridColumn>
+    </DxDataGrid>
+    <DxChart Data="@pageSumChartQuery">
+        <DxChartBarSeries Name="B+W" ArgumentField="@((PageSumChartQueryModel s)=>s.GRP_ID)" ValueField="@((PageSumChartQueryModel s)=>s.Mono_Totals)" />
+        <DxChartBarSeries Name="Colour" ArgumentField="@((PageSumChartQueryModel s)=>s.GRP_ID)" ValueField="@((PageSumChartQueryModel s)=>s.Colour_Totals)" />
+        <DxChartLegend Position="@RelativePosition.Outside" HorizontalAlignment="@HorizontalAlignment.Left" />
+        <DxChartValueAxis Name="Print Totals" Position="@HorizontalEdge.Left">
+            <DxChartAxisTitle Text="Mono Totals"></DxChartAxisTitle>
+        </DxChartValueAxis>
+        <DxChartArgumentAxis>
+            <DxChartAxisTitle Text="Department"></DxChartAxisTitle>
+        </DxChartArgumentAxis>
+    </DxChart>
+</div>
+
+}
+
+
+@code {
+    private List<PageSumQueryModel> pageSumQuery;
+    private IEnumerable<PageSumChartQueryModel> pageSumChartQuery;
+
+    private PageSumQueryModel pageSumQueryModel = new PageSumQueryModel();
+
+    private List<PageSumQueryModel> printTypeTotals;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        pageSumQuery = await _db.PageSumQuery();
+        pageSumChartQuery = await _db.PageSumChartQuery();
+
+    }
+}
