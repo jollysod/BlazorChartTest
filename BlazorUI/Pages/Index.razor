@@ -13,7 +13,7 @@
 
 <h3>Datagrid / Chart Test</h3>
 
-@if (pageSumQuery is null)
+@if (DBDataIn is null)
 //don't do anything yet...
 {
 
@@ -21,15 +21,15 @@
 else
 {
 <div class="grid-container">
-    <DxDataGrid Data="@pageSumQuery" PageSize="20">
-        <DxDataGridColumn Caption="Department" Field="@nameof(PageSumQueryModel.GRP_ID)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="0">
+    <DxDataGrid Data="@DBDataIn" PageSize="20">
+        <DxDataGridColumn Caption="Department" Field="@nameof(PageSumChartQueryModel.GRP_ID)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="0">
         </DxDataGridColumn>
-        <DxDataGridColumn Caption="Mono Totals" Field="@nameof(PageSumQueryModel.Mono_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="1">
+        <DxDataGridColumn Caption="Mono Totals" Field="@nameof(PageSumChartQueryModel.Mono_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="1">
         </DxDataGridColumn>
-        <DxDataGridColumn Caption="Colour Totals" Field="@nameof(PageSumQueryModel.Colour_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="2">
+        <DxDataGridColumn Caption="Colour Totals" Field="@nameof(PageSumChartQueryModel.Colour_Totals)" SortOrder="@DataGridColumnSortOrder.Ascending" SortIndex="2">
         </DxDataGridColumn>
     </DxDataGrid>
-    <DxChart Data="@pageSumChartQuery">
+    <DxChart Data="@DBDataIn">
         <DxChartBarSeries Name="B+W" ArgumentField="@((PageSumChartQueryModel s)=>s.GRP_ID)" ValueField="@((PageSumChartQueryModel s)=>s.Mono_Totals)" />
         <DxChartBarSeries Name="Colour" ArgumentField="@((PageSumChartQueryModel s)=>s.GRP_ID)" ValueField="@((PageSumChartQueryModel s)=>s.Colour_Totals)" />
         <DxChartLegend Position="@RelativePosition.Outside" HorizontalAlignment="@HorizontalAlignment.Left" />
@@ -46,19 +46,10 @@ else
 
 
 @code {
-    private List<PageSumQueryModel> pageSumQuery;
-    private IEnumerable<PageSumChartQueryModel> pageSumChartQuery;
+  private IEnumerable<PageSumChartQueryModel> DBDataIn;
 
-    private PageSumQueryModel pageSumQueryModel = new PageSumQueryModel();
-
-    private List<PageSumQueryModel> printTypeTotals;
-
-
-    protected override async Task OnInitializedAsync()
-    {
-
-        pageSumQuery = await _db.PageSumQuery();
-        pageSumChartQuery = await _db.PageSumChartQuery();
-
-    }
+  protected override async Task OnInitializedAsync()
+  {
+      DBDataIn = await _db.PageSumChartQuery();
+  }
 }
